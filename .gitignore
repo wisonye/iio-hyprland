@@ -1,0 +1,4 @@
+c/build
+c/.cache
+c/temp_build
+clangd.core

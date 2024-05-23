@@ -1,0 +1,97 @@
+* iio-hyprland
+
+Fork from https://github.com/JeanSchoeller/iio-hyprland and fix its bug. I use it to fix my =Thinkpad X1 Yoga Gen3= touchscreen rotation issue.
+
+This program uses =DBus= to listens to =iio-sensor-proxy= and use =hyprctl= to update orientation for monitor and touch devices.
+
+Here is a quick tutorial for =DBus= development: https://github.com/makercrew/dbus-sample
+
+
+** Install and configure =iio-sensor-proxy= (Arch Linux)
+
+#+BEGIN_SRC bash
+  #
+  # Install
+  #
+  doas pacman --sync --refresh iio-sensor-proxy
+
+  #
+  # Enable service
+  #
+  doas systemctl enable iio-sensor-proxy.service
+
+  #
+  # Start service
+  #
+  doas systemctl restart iio-sensor-proxy.service
+#+END_SRC
+
+
+Test it by running =monitor-sensor=:
+
+#+BEGIN_SRC bash
+  monitor-sensor --all
+
+  #     Waiting for iio-sensor-proxy to appear
+  # +++ iio-sensor-proxy appeared
+  # === Has accelerometer (orientation: normal)
+  # === Has ambient light sensor (value: 17.133001, unit: lux)
+  # === No proximity sensor
+  #     Light changed: 24.325001 (lux)
+  #     Accelerometer orientation changed: right-up
+  #     Accelerometer orientation changed: left-up
+  #     Light changed: 55.843003 (lux)
+  #     Accelerometer orientation changed: bottom-up
+  #     Light changed: 40.507002 (lux)
+  #     Light changed: 31.517001 (lux)
+  #     Accelerometer orientation changed: normal
+  #     Light changed: 97.515005 (lux)
+  #     Light changed: 25.066001 (lux) 
+#+END_SRC
+
+Rotate your laptop and you should see the above sensor events.
+
+
+** Install =dbus= dependencies (Arch Linux)
+
+#+BEGIN_SRC bash
+  doas pacman --sync --refresh dbus
+#+END_SRC
+
+
+** Configure
+
+#+BEGIN_SRC bash
+  cd c
+  ./configure.sh
+#+END_SRC
+
+
+** Build and run
+
+#+BEGIN_SRC bash
+  cd c
+  ./run.sh
+#+END_SRC
+
+
+** Build and install
+
+#+BEGIN_SRC bash
+  cd c
+  doas ./install.sh
+#+END_SRC
+Start it in =~/.config/hypr/hyprland.conf=:
+
+
+** Start =iio-hyprland= in =~/.config/hypr/hyprland.conf=
+
+#+BEGIN_SRC conf
+  #
+  # Auto rotate monitor and touchpad/Tablet when detected orientation changed
+  #
+  exec-once = iio-hyprland
+#+END_SRC
+
+Restart =Hyprland= to take affect.
+
